@@ -1,0 +1,21 @@
+KPI,Breakdown,Value
+Engagement Retention Ratio,Overall,1.88
+Engagement Retention Ratio,France,1.84
+Engagement Retention Ratio,Germany,1.73
+Engagement Retention Ratio,Spain,2.17
+Product Depth Index,Overall,0.858
+Product Depth Index,France,0.88
+Product Depth Index,Germany,0.783
+Product Depth Index,Spain,0.889
+High-Balance Disengagement Rate (%),Overall,49.9
+High-Balance Disengagement Rate (%),France,50.7
+High-Balance Disengagement Rate (%),Germany,48.6
+High-Balance Disengagement Rate (%),Spain,45.0
+Credit Card Stickiness Score (pp),Overall,0.63
+Credit Card Stickiness Score (pp),France,0.32
+Credit Card Stickiness Score (pp),Germany,0.79
+Credit Card Stickiness Score (pp),Spain,1.7
+RSI Churn Rate by Quartile (%),Q1 (Weakest),28.84
+RSI Churn Rate by Quartile (%),Q2,24.04
+RSI Churn Rate by Quartile (%),Q3,15.92
+RSI Churn Rate by Quartile (%),Q4 (Strongest),12.68
