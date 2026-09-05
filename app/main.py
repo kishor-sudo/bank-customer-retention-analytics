@@ -14,7 +14,70 @@ import streamlit as st
  
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
  
-st.set_page_config(page_title="Retention Analytics Dashboard", layout="wide")
+st.set_page_config(page_title="Retention Analytics Dashboard", layout="wide", page_icon="🏦")
+ 
+# ---------------------------------------------------------------
+# Visual theme only — no data, logic, or filter behavior below
+# this point is affected by any of this.
+# ---------------------------------------------------------------
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+ 
+    html, body, [class*="css"] { font-family: 'Inter', -apple-system, sans-serif; }
+    .stApp { background-color: #f3f5f8; }
+ 
+    /* Sidebar */
+    section[data-testid="stSidebar"] { background-color: #182430; }
+    section[data-testid="stSidebar"] * { color: #e9edf2 !important; }
+    section[data-testid="stSidebar"] h1 { color: #ffffff !important; font-weight: 700; font-size: 1.35rem; }
+    section[data-testid="stSidebar"] div[role="radiogroup"] label {
+        padding: 8px 10px; border-radius: 8px; margin-bottom: 2px;
+    }
+    section[data-testid="stSidebar"] div[role="radiogroup"] label:hover {
+        background-color: rgba(255,255,255,0.08);
+    }
+    section[data-testid="stSidebar"] hr { border-color: rgba(255,255,255,0.15); }
+ 
+    /* Titles */
+    h1 { color: #182430 !important; font-weight: 700 !important;
+         border-bottom: 3px solid #2980b9; padding-bottom: 12px; margin-bottom: 22px !important; }
+    h3 { color: #182430 !important; font-weight: 600 !important; }
+ 
+    /* Metric cards */
+    div[data-testid="stMetric"] {
+        background-color: #ffffff; border-radius: 10px; padding: 14px 16px 10px 16px;
+        box-shadow: 0 1px 4px rgba(20,30,40,0.08); border-left: 4px solid #2980b9;
+    }
+    div[data-testid="stMetricLabel"] { color: #5a6672 !important; font-weight: 500; }
+    div[data-testid="stMetricValue"] { color: #182430 !important; font-weight: 700; }
+ 
+    /* Insight callouts */
+    .insight-box {
+        background-color: #eaf2f8; border-left: 4px solid #2980b9; border-radius: 6px;
+        padding: 12px 16px; margin: 6px 0 24px 0; color: #182430; font-size: 0.93rem; line-height: 1.5;
+    }
+ 
+    /* Dataframes */
+    div[data-testid="stDataFrame"] {
+        border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(20,30,40,0.06);
+    }
+</style>
+""", unsafe_allow_html=True)
+ 
+plt.rcParams.update({
+    "font.family": "sans-serif",
+    "font.sans-serif": ["DejaVu Sans", "Arial"],
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.edgecolor": "#c9d1d9",
+    "axes.labelcolor": "#182430",
+    "text.color": "#182430",
+    "xtick.color": "#5a6672",
+    "ytick.color": "#5a6672",
+    "figure.facecolor": "none",
+    "axes.facecolor": "none",
+})
  
 DATA_WITH_RSI = "data/segmented_churn_with_rsi.csv"
 DATA_SEGMENTED = "data/segmented_churn.csv"
@@ -61,7 +124,8 @@ def get_kpi_value(kpi_name, breakdown="Overall"):
 # ---------------------------------------------------------------
 # Sidebar navigation
 # ---------------------------------------------------------------
-st.sidebar.title("Retention Analytics")
+st.sidebar.title("🏦 Retention Analytics")
+st.sidebar.markdown("<div style='color:#a8b3bd; font-size:0.85rem; margin-top:-10px; margin-bottom:14px;'>Customer Engagement &amp; Product Utilization</div>", unsafe_allow_html=True)
 page = st.sidebar.radio(
     "Choose a module",
     [
@@ -73,7 +137,11 @@ page = st.sidebar.radio(
 )
  
 st.sidebar.markdown("---")
-st.sidebar.caption(f"Dataset: {len(df):,} customers | Overall churn rate: {overall_churn:.1f}%")
+st.sidebar.markdown(
+    f"<div style='color:#a8b3bd; font-size:0.85rem;'>Dataset: <b style='color:#e9edf2;'>{len(df):,}</b> customers"
+    f"<br>Overall churn rate: <b style='color:#e9edf2;'>{overall_churn:.1f}%</b></div>",
+    unsafe_allow_html=True
+)
  
  
 # =================================================================
@@ -114,9 +182,11 @@ if page.startswith("1"):
  
     highest = churn_by_segment.idxmax()
     lowest = churn_by_segment.idxmin()
-    st.caption(
-        f"💡 **{highest}** customers churn nearly {churn_by_segment.max()/churn_by_segment.min():.1f}x "
-        f"more often than **{lowest}** customers — engagement, not balance, drives retention."
+    st.markdown(
+        f"<div class='insight-box'>💡 <b>{highest}</b> customers churn nearly "
+        f"{churn_by_segment.max()/churn_by_segment.min():.1f}x more often than <b>{lowest}</b> "
+        f"customers — engagement, not balance, drives retention.</div>",
+        unsafe_allow_html=True
     )
  
  
@@ -149,9 +219,11 @@ elif page.startswith("2"):
     plt.tight_layout()
     st.pyplot(fig)
  
-    st.caption(
-        "💡 Churn is U-shaped, not linear: 2 products is the stickiest tier, but 3-4 products "
-        "carries dramatically higher churn — more products does not automatically mean more loyalty."
+    st.markdown(
+        "<div class='insight-box'>💡 Churn is U-shaped, not linear: 2 products is the stickiest "
+        "tier, but 3-4 products carries dramatically higher churn — more products does not "
+        "automatically mean more loyalty.</div>",
+        unsafe_allow_html=True
     )
  
     st.markdown(f"### Customers with {prod_range[0]}–{prod_range[1]} products")
@@ -192,9 +264,11 @@ elif page.startswith("3"):
     col3.metric("Churn rate (this group)", f"{churn_rate:.1f}%",
                 f"{churn_rate - overall_churn:+.1f} pp vs overall")
  
-    st.caption(
-        "💡 A small slice of high-balance, disengaged customers can hold a disproportionate share "
-        "of total deposits — that concentration is the real business exposure, not just headcount."
+    st.markdown(
+        "<div class='insight-box'>💡 A small slice of high-balance, disengaged customers can hold "
+        "a disproportionate share of total deposits — that concentration is the real business "
+        "exposure, not just headcount.</div>",
+        unsafe_allow_html=True
     )
  
     st.markdown("### Matching customers")
@@ -235,8 +309,10 @@ elif page.startswith("4"):
     col2.metric("Churn rate in this range", f"{filtered_churn:.1f}%",
                 f"{filtered_churn - overall_churn:+.1f} pp vs overall")
  
-    st.caption(
-        "💡 Churn falls steadily as the Relationship Strength Index rises — the weakest-relationship "
-        "quartile churns over twice as often as the strongest, confirming the index tracks real risk."
+    st.markdown(
+        "<div class='insight-box'>💡 Churn falls steadily as the Relationship Strength Index "
+        "rises — the weakest-relationship quartile churns over twice as often as the strongest, "
+        "confirming the index tracks real risk.</div>",
+        unsafe_allow_html=True
     )
  
